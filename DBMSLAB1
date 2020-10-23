@@ -1,0 +1,124 @@
+create table PUBLISHER(name varchar(20),address varchar(20),phono  long,primary key(name));
+create table BOOK(book_id integer,title varchar(20),publisher_name varchar(20),pub_year integer,primary key(book_id),foreign key(publisher_name)references PUBLISHER(name) on delete cascade);
+create table BOOK_AUTHORS(book_id integer,author_name varchar(20),primary key(book_id),foreign key(book_id)references BOOK(book_id)on delete cascade);
+create table LIBRARY_BRANCH(branch_id integer primary key,branch_name varchar(20),address varchar(20));
+create table BOOK_COPIES(book_id integer,branch_id integer,no_of_copies integer,primary key(book_id,branch_id),foreign key(book_id)references BOOK(book_id),foreign key(branch_id)references LIBRARY_BRANCH(branch_id)on delete cascade);
+create table BOOK_LENDING(book_id integer,branch_id integer,card_no integer,date_out date,due_date date,primary key(book_id,branch_id,card_no),foreign key(book_id)references BOOK(book_id),foreign key(branch_id)references LIBRARY_BRANCH(branch_id)on delete cascade);
+insert into PUBLISHER values('Mcgraw','Banglore',9696500001);
+insert into PUBLISHER values('Person','Banglore',9595950000);
+insert into PUBLISHER values('SAM Pub','Manglore',9494940000);
+insert into PUBLISHER values('IOP','Mumbai',9797970000);
+insert into PUBLISHER values('IEEE','Delhi',9090900000);
+insert into BOOK values(10,'DBMS','Mcgraw',2010);
+insert into BOOK values(20,'SE','Person',2008);
+insert into BOOK values(30,'FLAT','SAM Pub',2019);
+insert into BOOK values(40,'BDA','IOP',2018);
+insert into BOOK values(50,'MP','IEEE',2020);
+insert into BOOK_AUTHORS  values(10,'Andrew');
+insert into BOOK_AUTHORS values(20,'Raj Kumar');
+insert into BOOK_AUTHORS  values(30,'Samual');
+insert into BOOK_AUTHORS  values(40,'Padma');
+insert into BOOK_AUTHORS values(50,'Guru');
+insert into LIBRARY_BRANCH values(100,'Main Building','Manglore');
+insert into LIBRARY_BRANCH values(200,'Ground Floor','Banglore');
+insert into LIBRARY_BRANCH values(300,'1st Floor','Banglore');
+insert into LIBRARY_BRANCH values(400,'Research Building','Udupi');
+insert into LIBRARY_BRANCH values(500,'OPD Building','Manipal');
+insert into BOOK_COPIES values(10,100,20);
+insert into BOOK_COPIES values(30,100,30);
+insert into BOOK_COPIES values(10,200,5);
+insert into BOOK_COPIES values(20,300,15);
+insert into BOOK_COPIES values(40,500,7);
+insert into BOOK_LENDING values(10,100,201,'2020-06-15','2020-06-25');
+insert into BOOK_LENDING values(20,200,202,'2020-07-10','2020-07-20');
+insert into BOOK_LENDING values(30,300,203,'2020-07-25','2020-07-30');
+insert into BOOK_LENDING values(40,400,204,'2020-08-14','2020-08-26');
+insert into BOOK_LENDING values(50,500,205,'2020-09-01','2020-09-10');
+
+Query:
+Select BOOK.book_id,Title,Publisher_name,Authors_name,No_of_copies from BOOK,BOOK_AUTHORS,BOOK_COPIES where BOOK.book_id=BOOK_AUTHORS.book_id and BOOK.book_id=BOOK_COPIES.book_id ;
+---
+
+**Query #1**
+Select BOOK.book_id,title,publisher_name,author_name,no_of_copies from BOOK,BOOK_AUTHORS,BOOK_COPIES where BOOK.book_id=BOOK_AUTHORS.book_id and BOOK.book_id=BOOK_COPIES.book_id ;
+
+Result:
+| book_id | title | publisher_name | author_name | no_of_copies |
+| ------- | ----- | -------------- | ----------- | ------------ |
+| 10      | DBMS  | Mcgraw         | Andrew      | 20           |
+| 10      | DBMS  | Mcgraw         | Andrew      | 5            |
+| 20      | SE    | Person         | Raj Kumar   | 15           |
+| 30      | FLAT  | SAM Pub        | Samual      | 30           |
+| 40      | BDA   | IOP            | Padma       | 7            |
+
+---
+
+**Query #2**
+Select card_no From BOOK_LENDING where date_out between '2017-01-01' and '2017-06-01' group by card_no having count(card_no)>3;
+Result:
+There are no results to be displayed.
+
+---
+**Query #3**
+Delete from BOOK where Book_id=20;
+Select * from BOOK;
+Select * from BOOK_AUTHORS;
+Select * from BOOK_COPIES;
+Select * from BOOK_LENDING;
+
+Results:
+**Query #1**
+
+    Delete from BOOK where Book_id=20;
+
+There are no results to be displayed.
+
+---
+**Query #2**
+
+    Select * from BOOK;
+
+| book_id | title | publisher_name | pub_year |
+| ------- | ----- | -------------- | -------- |
+| 10      | DBMS  | Mcgraw         | 2010     |
+| 30      | FLAT  | SAM Pub        | 2019     |
+| 40      | BDA   | IOP            | 2018     |
+| 50      | MP    | IEEE           | 2020     |
+
+---
+**Query #3**
+
+    Select * from BOOK_AUTHORS;
+
+| book_id | author_name |
+| ------- | ----------- |
+| 10      | Andrew      |
+| 30      | Samual      |
+| 40      | Padma       |
+| 50      | Guru        |
+
+---
+**Query #4**
+
+    Select * from BOOK_COPIES;
+
+| book_id | branch_id | no_of_copies |
+| ------- | --------- | ------------ |
+| 10      | 100       | 20           |
+| 10      | 200       | 5            |
+| 30      | 100       | 30           |
+| 40      | 500       | 7            |
+
+---
+**Query #5**
+
+Select * from BOOK_LENDING;
+
+| book_id | branch_id | card_no | date_out   | due_date   |
+| ------- | --------- | ------- | ---------- | ---------- |
+| 10      | 100       | 201     | 2020-06-15 | 2020-06-25 |
+| 30      | 300       | 203     | 2020-07-25 | 2020-07-30 |
+| 40      | 400       | 204     | 2020-08-14 | 2020-08-26 |
+| 50      | 500       | 205     | 2020-09-01 | 2020-09-10 |
+
+---
